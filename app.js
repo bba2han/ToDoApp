@@ -1,5 +1,6 @@
 //Selecting all elements
 const toDo = document.querySelector("#toDo");
+const removeAllButton = document.querySelector("#removeAll");
 const addToDoButton = document.querySelector("#addToDo");
 const toDoList = document.querySelector(".list-group");
 const cardBody1 = document.querySelectorAll(".card-body")[0];
@@ -8,6 +9,8 @@ const cardBody2 = document.querySelectorAll(".card-body")[1];
 
 //Event Listeners
 addToDoButton.addEventListener("click", addToDo);
+removeAllButton.addEventListener("click", removeAll);
+cardBody2.addEventListener("click", deleteToDo);
 
 
 
@@ -27,14 +30,30 @@ function addToDoToUI(v){
     li.className = "list-group-item";
     li.textContent = v;
 
-    const a = document.createElement("a");
-    a.className = "delete-item";
-    a.textContent = "Delete";
-    a.href = "#";
-    a.style.padding = "10px";
+    const i = document.createElement("i");
+    i.className = "fs-6 bi bi-trash";
+    i.href = "#";
+    i.style.padding = "10px";
 
-    li.appendChild(a);
+    li.appendChild(i);
     toDoList.appendChild(li);
+}
+
+function deleteToDo(e){
+    if(e.target.className == "fs-6 bi bi-trash"){
+    const removeToDo = e.target.parentElement;
+    removeToDo.remove();
+    alertMessage("success", `You deleted ${removeToDo.textContent} successfully!`);
+    }
+}
+
+function removeAll(){
+    const removeAllToDo = document.querySelectorAll(".list-group-item");
+    if(removeAllToDo.length > 0){
+        removeAllToDo.forEach(element => {
+            element.remove();
+        });
+    }
 }
 
 function alertMessage(type, message){
@@ -52,3 +71,4 @@ function alertMessage(type, message){
         divalert.remove();
     }, 2500);
 }
+
