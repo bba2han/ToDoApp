@@ -11,8 +11,17 @@ const cardBody2 = document.querySelectorAll(".card-body")[1];
 addToDoButton.addEventListener("click", addToDo);
 removeAllButton.addEventListener("click", removeAll);
 cardBody2.addEventListener("click", deleteToDo);
+document.addEventListener("DOMContentLoaded", isPageLoaded);
 
 
+let todoarr = [];
+
+function isPageLoaded(){
+    checkStorage();
+    todoarr.forEach(element => {
+        addToDoToUI(element);
+    });
+}
 
 function addToDo(){
     const textBoxValue = toDo.value.trim();
@@ -21,6 +30,7 @@ function addToDo(){
     }
     else{
     addToDoToUI(textBoxValue);
+    addTodoToStorage(textBoxValue);
     alertMessage("success", "You added to do successfully!");
     }
 }
@@ -39,10 +49,39 @@ function addToDoToUI(v){
     toDoList.appendChild(li);
 }
 
+function addTodoToStorage(v){
+    checkStorage();
+    todoarr.push(v);
+    localStorage.setItem("todos", JSON.stringify(todoarr));
+}
+
+function deleteToDoFromStorage(v){
+    checkStorage();
+    todoarr.forEach(function(el, index){
+        if(v === el){
+            todoarr.splice(index, 1);
+        }
+    });
+    localStorage.setItem("todos", JSON.stringify(todoarr));
+}
+
+function checkStorage(){
+    if(localStorage.getItem("todos") !== null)
+    {
+        todoarr = JSON.parse(localStorage.getItem("todos")); 
+    }
+}
+
 function deleteToDo(e){
+    //delete from UI
     if(e.target.className == "fs-6 bi bi-trash"){
     const removeToDo = e.target.parentElement;
     removeToDo.remove();
+
+    //delete from Storage
+    deleteToDoFromStorage(removeToDo.textContent);
+
+    //alert
     alertMessage("success", `You deleted ${removeToDo.textContent} successfully!`);
     }
 }
@@ -53,6 +92,12 @@ function removeAll(){
         removeAllToDo.forEach(element => {
             element.remove();
         });
+        todoarr = [];
+        localStorage.setItem("todos", JSON.stringify(todoarr));
+        alertMessage("success", "You did everything!");
+    }
+    else{
+        alertMessage("danger", "There is nothing to delete!");
     }
 }
 
@@ -71,4 +116,3 @@ function alertMessage(type, message){
         divalert.remove();
     }, 2500);
 }
-
